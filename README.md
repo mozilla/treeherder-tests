@@ -1,8 +1,11 @@
 Treeherder Tests
 ============================
-Website automation for Treeherder for [https://treeherder.mozilla.org/][MOZ]
+Website automation for Treeherder reporting dashboard. You can specify the URL in the command line
+otherwise Stage will be selected by default.
 
-[MOZ]: https://treeherder.mozilla.org/
+Stage: https://treeherder.allizom.org/ (recommended)
+Production: https://treeherder.mozilla.org/
+
 
 Running Tests
 -------------
