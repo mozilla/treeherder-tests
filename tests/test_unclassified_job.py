@@ -11,19 +11,19 @@ from unittestzero import Assert
 from selenium.webdriver.common.by import By
 
 from pages.resultset import ResultsetPage
-from pages.resultset import JobLogPage
+from pages.resultset import LogviewerPage
 
 
 class TestUnclassifiedJobs:
 
     @pytest.mark.nondestructive
-    def test_unclassified_job_failure(self, mozwebqa):
+    def test_unclassified_failure(self, mozwebqa):
         # Open resultset page and search for next unclassified failure
         resultset_page = ResultsetPage(mozwebqa)
         resultset_page.go_to_page()
-        resultset_page.open_next_failed_job()
+        resultset_page.open_next_unclassified_failure()
 
-        teststatus = resultset_page.job_resultpane_status
+        teststatus = resultset_page.job_details_status
         Assert.equal(teststatus, 'testfailed')
 
     @pytest.mark.nondestructive
@@ -31,8 +31,8 @@ class TestUnclassifiedJobs:
         # Open the job log and verify there is content
         resultset_page = ResultsetPage(mozwebqa)
         resultset_page.go_to_page()
-        resultset_page.open_next_failed_job()
-        joblog_page = resultset_page.open_job_log()
-        joblog_page = JobLogPage(mozwebqa)
+        resultset_page.open_next_unclassified_failure()
+        logviewer_page = resultset_page.open_logviewer()
+        logviewer_page = LogviewerPage(mozwebqa)
 
-        Assert.true(joblog_page.is_job_status_visible)
+        Assert.true(logviewer_page.is_job_status_visible)
