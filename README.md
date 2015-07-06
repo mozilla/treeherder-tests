@@ -25,10 +25,13 @@ The instructions below will install the required Python libraries into your
 global Python installation. If you work on multiple Python projects that might
 end up needing different versions of the same libraries, you might want to
 follow `sudo easy_install pip` with `sudo pip install virtualenv`, and then
-create and activate a [virtualenv](http://www.virtualenv.org) (e.g. `virtualenv
-mcom-tests-env; source mcom-tests-env/bin/activate`) to create a clean
-"virtual environment" for just this project. Then you can
-`pip install -r requirements.txt` in your virtual environment
+create and activate a [virtualenv](http://www.virtualenv.org).
+
+To create and activate a virtualenv in the project root, you may type:
+user@machine: virtualenv .venv
+user@machine: source .venv/bin/activate
+
+Then you can 'pip install -r requirements.txt` in your virtual environment
 without needing to use `sudo`.
 
 If you don't mind installing globally, just run
