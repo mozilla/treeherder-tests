@@ -15,7 +15,7 @@ class ResultsetPage(Base):
 
     _job_details_locator = (By.ID, 'result-status-pane')
     _job_details_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span:nth-child(2)')
-    _logviewer_locator = (By.ID, 'logviewer-btn')
+    _logviewer_button_locator = (By.ID, 'logviewer-btn')
     _resultset_locator = (By.CSS_SELECTOR, 'div.row.result-set')
 
 
@@ -33,10 +33,7 @@ class ResultsetPage(Base):
 
     def open_logviewer(self):
         self.selenium.find_element(*self._job_details_locator)
-        self.selenium.find_element(*self._logviewer_locator).click()
-
-    def select_logviewer(self):
-        self.selenium.find_element(*self._logviewer_locator).click()
+        self.selenium.find_element(*self._logviewer_button_locator).click()
 
 class LogviewerPage(Base):
 

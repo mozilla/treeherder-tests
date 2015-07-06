@@ -27,7 +27,7 @@ class TestUnclassifiedJobs:
         Assert.equal(teststatus, 'testfailed')
 
     @pytest.mark.nondestructive
-    def test_open_failed_job_log(self, mozwebqa):
+    def test_open_unclassified_failure_log(self, mozwebqa):
         # Open the job log and verify there is content
         resultset_page = ResultsetPage(mozwebqa)
         resultset_page.go_to_page()
