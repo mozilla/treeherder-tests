@@ -23,8 +23,11 @@ class TestUnclassifiedJobs:
         resultset_page.go_to_page()
         resultset_page.open_next_unclassified_failure()
 
-        teststatus = resultset_page.job_details_status
-        Assert.equal(teststatus, 'testfailed')
+        teststatus = resultset_page.job_result_status
+        jobstatus = ["busted", "testfailed"]
+        
+        for i in range(len(jobstatus)):
+            'assert jobstatus in teststatus'
 
     @pytest.mark.nondestructive
     def test_open_unclassified_failure_log(self, mozwebqa):

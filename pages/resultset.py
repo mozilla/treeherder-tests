@@ -13,16 +13,14 @@ from pages.base import Base
 
 class ResultsetPage(Base):
 
-    _job_details_locator = (By.ID, 'result-status-pane')
-    _job_details_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span:nth-child(2)')
+    _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span')
     _logviewer_button_locator = (By.ID, 'logviewer-btn')
     _resultset_locator = (By.CSS_SELECTOR, 'div.row.result-set')
-
+    _result_status_locator = (By.ID, 'bottom-left-panel')
 
     @property
-    def job_details_status(self):
-        self.selenium.find_element(*self._job_details_locator)
-        return self.selenium.find_element(*self._job_details_status_locator).text
+    def job_result_status(self):
+        return self.selenium.find_element(*self._job_result_status_locator).text
 
     def go_to_page(self):
         self.open('')
@@ -32,13 +30,13 @@ class ResultsetPage(Base):
         self.selenium.find_element(*self._resultset_locator).send_keys("n")
 
     def open_logviewer(self):
-        self.selenium.find_element(*self._job_details_locator)
-        self.selenium.find_element(*self._logviewer_button_locator).click()
+        WebDriverWait(self.selenium, self.timeout).until(lambda s: self.selenium.find_element(*self._result_status_locator).is_displayed())
+        self.selenium.find_element(*self._resultset_locator).send_keys("l")
 
 class LogviewerPage(Base):
 
     _page_title = 'Log for'
-    _job_header_locator = (By.CSS_SELECTOR, '.job-header')
+    _job_header_locator = (By.CSS_SELECTOR, 'div.job-header')
 
 
     def __init__(self, testsetup):
