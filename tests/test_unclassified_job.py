@@ -24,7 +24,7 @@ class TestUnclassifiedJobs:
         resultset_page.open_next_unclassified_failure()
 
         teststatus = resultset_page.job_result_status
-        jobstatus = ["busted", "testfailed"]
+        jobstatus = ["busted", "testfailed", "exception"]
 
         for i in range(len(jobstatus)):
             'assert jobstatus in teststatus'
