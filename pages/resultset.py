@@ -39,7 +39,6 @@ class ResultsetPage(Base):
         self.selenium.find_element(*self._logviewer_button_locator).click()
 
 
-
 class LogviewerPage(Base):
 
     _page_title = 'Log for'
