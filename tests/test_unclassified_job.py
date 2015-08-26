@@ -21,7 +21,7 @@ class TestUnclassifiedJobs:
         # Open resultset page and search for next unclassified failure
         resultset_page = ResultsetPage(mozwebqa)
         resultset_page.go_to_page()
-        Assert.not_equal("0","resultset_page.verify_unclassified_failure_exists")
+        Assert.greater_equal("resultset_page.return_unclassified_failure_count", "1")
 
         resultset_page.open_next_unclassified_failure()
 
