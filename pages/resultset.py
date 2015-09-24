@@ -18,6 +18,7 @@ class ResultsetPage(Base):
     _logviewer_button_locator = (By.ID, 'logviewer-btn')
     _resultset_locator = (By.CSS_SELECTOR, 'div.row.result-set')
     _result_status_locator = (By.ID, 'job-details-panel')
+    _unclassified_failure_count_locator = (By.ID, 'unclassified-failure-count')
 
     @property
     def job_result_status(self):
@@ -33,6 +34,9 @@ class ResultsetPage(Base):
     def open_logviewer(self):
         WebDriverWait(self.selenium, self.timeout).until(lambda s: self.selenium.find_element(*self._job_details_actionbar_locator).is_displayed())
         self.selenium.find_element(*self._resultset_locator).send_keys("l")
+
+    def return_unclassified_failure_count(self):
+        return self.selenium.find_element(*self.unclassified_failure_count_locator).get_attribute("value")
 
 class LogviewerPage(Base):
 
