@@ -36,7 +36,7 @@ class ResultsetPage(Base):
         self.selenium.find_element(*self._resultset_locator).send_keys("l")
 
     def return_unclassified_failure_count(self):
-        return self.selenium.find_element(*self.unclassified_failure_count_locator).get_attribute("value")
+        return self.selenium.find_element(*self.unclassified_failure_count_locator).int(element.text)
 
 class LogviewerPage(Base):
 
