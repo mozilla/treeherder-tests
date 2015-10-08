@@ -24,6 +24,10 @@ class ResultsetPage(Base):
     def job_result_status(self):
         return self.selenium.find_element(*self._job_result_status_locator).text
 
+    @property
+    def return_unclassified_failure_count(self):
+        return int(self.selenium.find_element(*self._unclassified_failure_count_locator).text)
+
     def go_to_page(self):
         self.open('')
 
@@ -34,9 +38,6 @@ class ResultsetPage(Base):
     def open_logviewer(self):
         WebDriverWait(self.selenium, self.timeout).until(lambda s: self.selenium.find_element(*self._job_details_actionbar_locator).is_displayed())
         self.selenium.find_element(*self._resultset_locator).send_keys("l")
-
-    def return_unclassified_failure_count(self):
-        return self.selenium.find_element(*self.unclassified_failure_count_locator).int(element.text)
 
 class LogviewerPage(Base):
 
