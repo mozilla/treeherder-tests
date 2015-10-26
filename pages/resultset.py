@@ -25,7 +25,7 @@ class ResultsetPage(Base):
         return self.selenium.find_element(*self._job_result_status_locator).text
 
     @property
-    def return_unclassified_failure_count(self):
+    def unclassified_failure_count(self):
         return int(self.selenium.find_element(*self._unclassified_failure_count_locator).text)
 
     def go_to_page(self):
