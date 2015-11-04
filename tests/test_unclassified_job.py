@@ -21,6 +21,8 @@ class TestUnclassifiedJobs:
         # Open resultset page and search for next unclassified failure
         resultset_page = ResultsetPage(mozwebqa)
         resultset_page.go_to_page()
+        Assert.greater_equal(resultset_page.unclassified_failure_count, 1)
+
         resultset_page.open_next_unclassified_failure()
 
         teststatus = resultset_page.job_result_status
@@ -34,6 +36,8 @@ class TestUnclassifiedJobs:
         # Open the job log and verify there is content
         resultset_page = ResultsetPage(mozwebqa)
         resultset_page.go_to_page()
+        Assert.greater_equal(1, resultset_page.unclassified_failure_count)
+
         resultset_page.open_next_unclassified_failure()
         logviewer_page = resultset_page.open_logviewer()
         logviewer_page = LogviewerPage(mozwebqa)
