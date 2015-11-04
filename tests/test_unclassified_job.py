@@ -36,7 +36,7 @@ class TestUnclassifiedJobs:
         # Open the job log and verify there is content
         resultset_page = ResultsetPage(mozwebqa)
         resultset_page.go_to_page()
-        Assert.greater_equal(1, resultset_page.unclassified_failure_count)
+        Assert.greater_equal(resultset_page.unclassified_failure_count, 1)
 
         resultset_page.open_next_unclassified_failure()
         logviewer_page = resultset_page.open_logviewer()
