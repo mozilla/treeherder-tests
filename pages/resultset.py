@@ -3,12 +3,14 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 
-from pages.base import Base
+import expected
+from pages.page import Page
 
 
-class ResultsetPage(Base):
+class ResultsetPage(Page):
 
     _job_details_actionbar_locator = (By.ID, 'job-details-actionbar')
     _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span')
@@ -16,6 +18,11 @@ class ResultsetPage(Base):
     _resultset_locator = (By.CSS_SELECTOR, 'div.row.result-set')
     _result_status_locator = (By.ID, 'job-details-panel')
     _unclassified_failure_count_locator = (By.ID, 'unclassified-failure-count')
+
+    def wait_for_page_to_load(self):
+        Wait(self.selenium, self.timeout).until(
+            lambda s: self.unclassified_failure_count > 0)
+        return self
 
     @property
     def job_result_status(self):
@@ -25,33 +32,28 @@ class ResultsetPage(Base):
     def unclassified_failure_count(self):
         return int(self.selenium.find_element(*self._unclassified_failure_count_locator).text)
 
-    def go_to_page(self):
-        self.open('')
-
     def open_next_unclassified_failure(self):
-        WebDriverWait(self.selenium, self.timeout).until(lambda s: self.selenium.find_element(*self._resultset_locator).is_displayed())
-        self.selenium.find_element(*self._resultset_locator).send_keys("n")
+        el = self.selenium.find_element(*self._resultset_locator)
+        Wait(self.selenium, self.timeout).until(EC.visibility_of(el))
+        el.send_keys('n')
+        Wait(self.selenium, self.timeout).until(lambda s: self.job_result_status)
 
     def open_logviewer(self):
-        WebDriverWait(self.selenium, self.timeout).until(lambda s: self.selenium.find_element(*self._job_details_actionbar_locator).is_displayed())
-        self.selenium.find_element(*self._resultset_locator).send_keys("l")
+        Wait(self.selenium, self.timeout).until(
+            EC.visibility_of_element_located(self._job_details_actionbar_locator))
+        self.selenium.find_element(*self._resultset_locator).send_keys('l')
+        return LogviewerPage(self.base_url, self.selenium)
 
 
-class LogviewerPage(Base):
+class LogviewerPage(Page):
 
-    _page_title = 'Log for'
     _job_header_locator = (By.CSS_SELECTOR, 'div.job-header')
 
-    def __init__(self, testsetup):
-        Base.__init__(self, testsetup)
-
-        if self.selenium.title != self._page_title:
-            for handle in self.selenium.window_handles:
-                self.selenium.switch_to_window(handle)
-                WebDriverWait(self.selenium, self.timeout).until(lambda s: s.title)
-        else:
-            raise Exception('Page has not loaded')
+    def __init__(self, base_url, selenium):
+        Page.__init__(self, base_url, selenium)
+        Wait(self.selenium, self.timeout).until(
+            expected.window_with_title('Log for'))
 
     @property
     def is_job_status_visible(self):
-        return self.is_element_visible(*self._job_header_locator)
+        return self.is_element_visible(self._job_header_locator)
