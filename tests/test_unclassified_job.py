@@ -8,8 +8,6 @@ import pytest
 
 from unittestzero import Assert
 
-from selenium.webdriver.common.by import By
-
 from pages.resultset import ResultsetPage
 from pages.resultset import LogviewerPage
 
@@ -29,7 +27,7 @@ class TestUnclassifiedJobs:
         jobstatus = ["busted", "testfailed", "exception"]
 
         for i in range(len(jobstatus)):
-            'assert jobstatus in teststatus'
+            assert jobstatus in teststatus
 
     @pytest.mark.nondestructive
     def test_open_unclassified_failure_log(self, mozwebqa):

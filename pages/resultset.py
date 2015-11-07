@@ -5,7 +5,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 from pages.base import Base
@@ -39,11 +38,11 @@ class ResultsetPage(Base):
         WebDriverWait(self.selenium, self.timeout).until(lambda s: self.selenium.find_element(*self._job_details_actionbar_locator).is_displayed())
         self.selenium.find_element(*self._resultset_locator).send_keys("l")
 
+
 class LogviewerPage(Base):
 
     _page_title = 'Log for'
     _job_header_locator = (By.CSS_SELECTOR, 'div.job-header')
-
 
     def __init__(self, testsetup):
         Base.__init__(self, testsetup)
