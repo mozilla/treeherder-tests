@@ -6,7 +6,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from pages.base import Base
-from pages.page import Page
 
 
 class PerfherderPage(Base):
@@ -23,8 +22,7 @@ class PerfherderPage(Base):
         return self.is_element_visible(self._graph_chooser_locator)
 
     def open_treeherder_page(self):
-        header = self.Header(self)
-        header.switch_page_using_dropdown()
+        self.header.switch_page_using_dropdown()
 
         from treeherder import TreeherderPage
         return TreeherderPage(self.base_url, self.selenium).wait_for_page_to_load()

@@ -46,8 +46,7 @@ class TreeherderPage(Base):
         return LogviewerPage(self.base_url, self.selenium)
 
     def open_perfherder_page(self):
-        header = self.Header(self)
-        header.switch_page_using_dropdown()
+        self.header.switch_page_using_dropdown()
 
         from perfherder import PerfherderPage
         return PerfherderPage(self.base_url, self.selenium).wait_for_page_to_load()

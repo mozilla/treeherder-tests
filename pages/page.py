@@ -15,6 +15,16 @@ class WebView(object):
         self.wait = WebDriverWait(self.selenium, self.timeout)
         self.kwargs = kwargs
 
+    @property
+    def _root(self):
+        return self.selenium
+
+    def find_element(self, locator):
+        return self._root.find_element(*locator)
+
+    def find_elements(self, locator):
+        return self._root.find_elements(*locator)
+
     def is_element_visible(self, locator):
         try:
             return self.selenium.find_element(*locator).is_displayed()

@@ -12,11 +12,11 @@ class TestUnclassifiedJobs:
     @pytest.mark.nondestructive
     def test_unclassified_failure(self, base_url, selenium):
         # Open resultset page and search for next unclassified failure
-        treeherder_page = TreeherderPage(base_url, selenium).open()
-        assert treeherder_page.unclassified_failure_count > 0
+        page = TreeherderPage(base_url, selenium).open()
+        assert page.unclassified_failure_count > 0
 
-        treeherder_page.open_next_unclassified_failure()
-        teststatus = treeherder_page.job_result_status
+        page.open_next_unclassified_failure()
+        teststatus = page.job_result_status
         assert teststatus in ['busted', 'testfailed', 'exception']
 
     @pytest.mark.nondestructive
