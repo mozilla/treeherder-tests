@@ -7,10 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 import expected
+from pages.base import Base
 from pages.page import Page
 
 
-class ResultsetPage(Page):
+class TreeherderPage(Base):
 
     _job_details_actionbar_locator = (By.ID, 'job-details-actionbar')
     _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span')
@@ -43,6 +44,12 @@ class ResultsetPage(Page):
             EC.visibility_of_element_located(self._job_details_actionbar_locator))
         self.selenium.find_element(*self._resultset_locator).send_keys('l')
         return LogviewerPage(self.base_url, self.selenium)
+
+    def open_perfherder_page(self):
+        self.header.switch_page_using_dropdown()
+
+        from perfherder import PerfherderPage
+        return PerfherderPage(self.base_url, self.selenium).wait_for_page_to_load()
 
 
 class LogviewerPage(Page):
