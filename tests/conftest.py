@@ -9,9 +9,9 @@ import requests
 
 
 @pytest.fixture(scope='session')
-def capabilities(capabilities):
-    capabilities.setdefault('tags', []).append('treeherder')
-    return capabilities
+def session_capabilities(session_capabilities):
+    session_capabilities.setdefault('tags', []).append('treeherder')
+    return session_capabilities
 
 
 @pytest.fixture
