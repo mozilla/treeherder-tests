@@ -19,9 +19,9 @@ class Base(Page):
 
     class Header(PageRegion):
 
+        _root_locator = (By.ID, 'th-global-navbar')
         _login_locator = (By.CSS_SELECTOR, 'a.btn > span:nth-child(1)')
         _logout_icon_locator = (By.ID, 'logoutLabel')
-        _root_locator = (By.ID, 'th-global-navbar')
         _dropdown_menu_switch_page_locator = (By.CSS_SELECTOR, '.open ul > li a')
         _dropdown_menu_locator = (By.ID, 'th-logo')
 
@@ -31,7 +31,6 @@ class Base(Page):
 
         def click_login(self):
             self.selenium.find_element(*self._login_locator).click()
-            return not self.is_element_visible(self._login_locator)
 
         def login(self, email, password):
             self.click_login()
