@@ -15,20 +15,13 @@ from pages.page import PageRegion
 
 class TreeherderPage(Base):
 
-    _first_resultset_datestamp_locator = (By.CSS_SELECTOR, '.result-set .result-set-title-left > span a')
-    _result_set_locator = (By.CSS_SELECTOR, '#th-global-content .result-set')
-    _selected_job_title_locator = (By.CSS_SELECTOR, '.job-list .selected-job')
-    _results_locator = (By.CSS_SELECTOR, '.result-set-bar')
+    _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
     _unclassified_failure_count_locator = (By.ID, 'unclassified-failure-count')
 
     def wait_for_page_to_load(self):
         Wait(self.selenium, self.timeout).until(
             lambda s: self.unclassified_failure_count > 0)
         return self
-
-    @property
-    def first_revision_date(self):
-        return self.selenium.find_element(*self._first_resultset_datestamp_locator).text
 
     @property
     def job_details(self):
@@ -39,15 +32,15 @@ class TreeherderPage(Base):
         return self.Pinboard(self)
 
     @property
-    def results_count(self):
-        return len(self.selenium.find_elements(*self._results_locator))
+    def result_sets(self):
+        return [self.ResultSet(self, el) for el in self.find_elements(self._result_sets_locator)]
 
     @property
     def unclassified_failure_count(self):
         return int(self.selenium.find_element(*self._unclassified_failure_count_locator).text)
 
     def open_next_unclassified_failure(self):
-        el = self.selenium.find_element(*self._result_set_locator)
+        el = self.selenium.find_element(*self._result_sets_locator)
         Wait(self.selenium, self.timeout).until(EC.visibility_of(el))
         el.send_keys('n')
         Wait(self.selenium, self.timeout).until(lambda s: self.job_details.job_result_status)
@@ -58,22 +51,38 @@ class TreeherderPage(Base):
         from perfherder import PerfherderPage
         return PerfherderPage(self.base_url, self.selenium).wait_for_page_to_load()
 
-    def open_single_resultset(self):
-        Wait(self.selenium, self.timeout).until(
-            EC.visibility_of_element_located(self._first_resultset_datestamp_locator))
-        self.selenium.find_element(*self._first_resultset_datestamp_locator).click()
-
     def pin_using_spacebar(self):
-        el = self.selenium.find_element(*self._result_set_locator)
+        el = self.selenium.find_element(*self._result_sets_locator)
         Wait(self.selenium, self.timeout).until(EC.visibility_of(el))
         el.send_keys(Keys.SPACE)
+        Wait(self.selenium, self.timeout).until(lambda _: self.pinboard.is_pinboard_open)
 
-    def select_next_job(self):
-        el = self.selenium.find_element(*self._result_set_locator)
-        Wait(self.selenium, self.timeout).until(EC.visibility_of(el))
-        el.send_keys(Keys.ARROW_RIGHT)
-        Wait(self.selenium, self.timeout).until(lambda s: self.job_details.job_result_status)
-        return self.selenium.find_element(*self._selected_job_title_locator).get_attribute('title')
+    class ResultSet(PageRegion):
+
+        _datestamp_locator = (By.CSS_SELECTOR, '.result-set-title-left > span a')
+        _jobs_locator = (By.CLASS_NAME, 'job-btn')
+
+        @property
+        def datestamp(self):
+            return self.find_element(self._datestamp_locator).text
+
+        @property
+        def jobs(self):
+            return [self.Job(self.page, root=el) for el in self.find_elements(self._jobs_locator)]
+
+        def view(self):
+            return self.find_element(self._datestamp_locator).click()
+
+        class Job(PageRegion):
+
+            def click(self):
+                self._root.click()
+                Wait(self.selenium, self.timeout).until(
+                    lambda _: self.page.job_details.job_result_status)
+
+            @property
+            def symbol(self):
+                return self._root.text
 
     class JobDetails(PageRegion):
 
@@ -91,7 +100,9 @@ class TreeherderPage(Base):
             return LogviewerPage(self.base_url, self.selenium)
 
         def pin_job(self):
-            self.selenium.find_element(*self._pin_job_locator).click()
+            el = self.selenium.find_element(*self._pin_job_locator)
+            Wait(self.selenium, self.timeout).until(EC.visibility_of(el))
+            el.click()
 
     class Pinboard(PageRegion):
 
@@ -99,25 +110,36 @@ class TreeherderPage(Base):
 
         _clear_all_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .dropdown-menu li:nth-child(4)')
         _open_save_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .save-btn-dropdown')
-        _pinboard_jobs_locator = (By.CSS_SELECTOR, '#pinned-job-list .pinned-job')
+        _jobs_locator = (By.CLASS_NAME, 'pinned-job')
         _pinboard_remove_job_locator = (By.CSS_SELECTOR, '#pinned-job-list .pinned-job-close-btn')
-        _selected_job_title_locator = (By.CSS_SELECTOR, '.pinned-job.selected-job')
 
         @property
-        def pinned_job_title(self):
-            return self.selenium.find_element(*self._selected_job_title_locator).get_attribute('title')
+        def selected_job(self):
+            return next(j for j in self.jobs if j.is_selected)
 
         @property
-        def pins(self):
-            return len(self.selenium.find_elements(*self._pinboard_jobs_locator))
+        def jobs(self):
+            return [self.Job(self.page, el) for el in self.find_elements(self._jobs_locator)]
 
         @property
         def is_pinboard_open(self):
             return self.is_element_visible(self._root_locator)
 
         def clear_pinboard(self):
-            self.selenium.find_element(*self._open_save_menu_locator).click()
+            el = self.selenium.find_element(*self._open_save_menu_locator)
+            el.click()
+            Wait(self.selenium, self.timeout).until(lambda _: el.get_attribute('aria-expanded') == 'true')
             self.selenium.find_element(*self._clear_all_menu_locator).click()
+
+        class Job(PageRegion):
+
+            @property
+            def is_selected(self):
+                return 'selected-job' in self._root.get_attribute('class')
+
+            @property
+            def symbol(self):
+                return self._root.text
 
 
 class LogviewerPage(Page):

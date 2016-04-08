@@ -7,32 +7,32 @@ from pages.treeherder import TreeherderPage
 
 class TestPinJobs:
 
-    def test_pin_next_job(self, base_url, selenium):
-        # Open treeherder page, select next job and pin it
+    def test_pin_job(self, base_url, selenium):
+        # Open treeherder page, select first job and pin it
         page = TreeherderPage(base_url, selenium).open()
-        current_job_title = page.select_next_job()
-        assert 0 == page.pinboard.pins
+        job = page.result_sets[0].jobs[0]
+        job.click()
+        assert 0 == len(page.pinboard.jobs)
         page.pin_using_spacebar()
-        assert 1 == page.pinboard.pins
-        assert current_job_title in page.pinboard.pinned_job_title
+        assert 1 == len(page.pinboard.jobs)
+        assert job.symbol == page.pinboard.selected_job.symbol
 
     def test_pin_job_from_job_details(self, base_url, selenium):
-        # Open treeherder page, select next job, pin it by the logviewer icon
+        # Open treeherder page, select first job, pin it by the pin icon
         page = TreeherderPage(base_url, selenium).open()
-
-        next_job_title = page.select_next_job()
-        assert 0 == page.pinboard.pins
+        job = page.result_sets[0].jobs[0]
+        job.click()
+        assert 0 == len(page.pinboard.jobs)
         page.job_details.pin_job()
-        assert 1 == page.pinboard.pins
-        assert next_job_title in page.pinboard.pinned_job_title
+        assert 1 == len(page.pinboard.jobs)
+        assert job.symbol == page.pinboard.selected_job.symbol
 
     def test_clear_pinboard(self, base_url, selenium):
         # Open treeherder page, pin a job and then clear the pinboard
         page = TreeherderPage(base_url, selenium).open()
-
-        page.select_next_job()
+        page.result_sets[0].jobs[0].click()
         page.pin_using_spacebar()
-        assert 1 == page.pinboard.pins
+        assert 1 == len(page.pinboard.jobs)
         page.pinboard.clear_pinboard()
         assert page.pinboard.is_pinboard_open
-        assert 0 == page.pinboard.pins
+        assert 0 == len(page.pinboard.jobs)
