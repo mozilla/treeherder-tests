@@ -79,6 +79,7 @@ class TreeherderPage(Base):
         # Fix me: https://github.com/mozilla/treeherder-tests/issues/43
         self.open_repos_menu()
         self.selenium.find_element(*self._mozilla_central_repo_locator).click()
+        self.wait_for_page_to_load()
 
     def select_random_repo(self):
         self.open_repos_menu()
