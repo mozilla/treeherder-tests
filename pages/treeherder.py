@@ -2,12 +2,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import random
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.common.keys import Keys
 
 import expected
+
 from pages.base import Base
 from pages.page import Page
 from pages.page import PageRegion
@@ -15,13 +18,21 @@ from pages.page import PageRegion
 
 class TreeherderPage(Base):
 
+    _active_watched_repo_locator = (By.CSS_SELECTOR, '#watched-repo-navbar button.active')
+    _mozilla_central_repo_locator = (By.CSS_SELECTOR, '#th-global-navbar-top a[href*="mozilla-central"]')
+    _repos_menu_locator = (By.ID, 'repoLabel')
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
+    _unchecked_repos_links_locator = (By.CSS_SELECTOR, '#repoLabel + .dropdown-menu .dropdown-checkbox:not([checked]) + .dropdown-link')
     _unclassified_failure_count_locator = (By.ID, 'unclassified-failure-count')
 
     def wait_for_page_to_load(self):
         Wait(self.selenium, self.timeout).until(
             lambda s: self.unclassified_failure_count > 0)
         return self
+
+    @property
+    def active_watched_repo(self):
+        return self.selenium.find_element(*self._active_watched_repo_locator).text
 
     @property
     def job_details(self):
@@ -34,6 +45,10 @@ class TreeherderPage(Base):
     @property
     def result_sets(self):
         return [self.ResultSet(self, el) for el in self.find_elements(self._result_sets_locator)]
+
+    @property
+    def unchecked_repos(self):
+        return self.selenium.find_elements(*self._unchecked_repos_links_locator)
 
     @property
     def unclassified_failure_count(self):
@@ -51,11 +66,28 @@ class TreeherderPage(Base):
         from perfherder import PerfherderPage
         return PerfherderPage(self.base_url, self.selenium).wait_for_page_to_load()
 
+    def open_repos_menu(self):
+        self.selenium.find_element(*self._repos_menu_locator).click()
+
     def pin_using_spacebar(self):
         el = self.selenium.find_element(*self._result_sets_locator)
         Wait(self.selenium, self.timeout).until(EC.visibility_of(el))
         el.send_keys(Keys.SPACE)
         Wait(self.selenium, self.timeout).until(lambda _: self.pinboard.is_pinboard_open)
+
+    def select_mozilla_central_repo(self):
+        # Fix me: https://github.com/mozilla/treeherder-tests/issues/43
+        self.open_repos_menu()
+        self.selenium.find_element(*self._mozilla_central_repo_locator).click()
+
+    def select_random_repo(self):
+        self.open_repos_menu()
+        repo = random.choice(self.unchecked_repos)
+        repo_name = repo.text
+        repo.click()
+        Wait(self.selenium, self.timeout).until(
+            lambda s: self._active_watched_repo_locator == repo_name)
+        return repo_name
 
     class ResultSet(PageRegion):
 
