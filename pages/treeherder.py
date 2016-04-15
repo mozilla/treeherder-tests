@@ -94,6 +94,7 @@ class TreeherderPage(Base):
 
         _datestamp_locator = (By.CSS_SELECTOR, '.result-set-title-left > span a')
         _jobs_locator = (By.CLASS_NAME, 'job-btn')
+        _pin_all_jobs_locator = (By.CLASS_NAME, 'glyphicon-pushpin')
 
         @property
         def datestamp(self):
@@ -102,6 +103,9 @@ class TreeherderPage(Base):
         @property
         def jobs(self):
             return [self.Job(self.page, root=el) for el in self.find_elements(self._jobs_locator)]
+
+        def pin_all_jobs(self):
+            return self.find_element(self._pin_all_jobs_locator).click()
 
         def view(self):
             return self.find_element(self._datestamp_locator).click()
