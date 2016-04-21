@@ -7,11 +7,9 @@ import pytest
 from pages.treeherder import TreeherderPage
 
 
-class TestLogin():
+@pytest.mark.nondestructive
+def test_that_a_new_user_can_login(base_url, selenium, new_user):
+    page = TreeherderPage(base_url, selenium).open()
 
-    @pytest.mark.nondestructive
-    def test_that_a_new_user_can_login(self, base_url, selenium, new_user):
-        page = TreeherderPage(base_url, selenium).open()
-
-        page.header.login(new_user['email'], new_user['password'])
-        assert page.header.is_user_logged_in
+    page.header.login(new_user['email'], new_user['password'])
+    assert page.header.is_user_logged_in
