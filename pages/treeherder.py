@@ -90,9 +90,13 @@ class TreeherderPage(Base):
 
     class ResultSet(PageRegion):
 
+        _add_new_job_locator = (By.CSS_SELECTOR, '.open ul > li a')
         _datestamp_locator = (By.CSS_SELECTOR, '.result-set-title-left > span a')
+        _dropdown_toggle_locator = (By.CLASS_NAME, 'dropdown-toggle')
+        _hide_runnable_jobs_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(2) > a')
         _jobs_locator = (By.CLASS_NAME, 'job-btn')
         _pin_all_jobs_locator = (By.CLASS_NAME, 'pin-all-jobs-btn')
+        _runnable_jobs_locator = (By.CSS_SELECTOR, '.runnable-job-btn.filter-shown')
 
         @property
         def datestamp(self):
@@ -101,6 +105,22 @@ class TreeherderPage(Base):
         @property
         def jobs(self):
             return [self.Job(self.page, root=el) for el in self.find_elements(self._jobs_locator)]
+
+        @property
+        def runnable_jobs(self):
+            return [self.Job(self.page, root=el) for el in self.find_elements(self._runnable_jobs_locator)]
+
+        def add_new_jobs(self):
+            self.find_element(self._dropdown_toggle_locator).click()
+            self.find_element(self._add_new_job_locator).click()
+            Wait(self.selenium, self.timeout).until(
+                lambda s: self.is_element_visible(self._runnable_jobs_locator))
+
+        def hide_runnable_jobs(self):
+            self.find_element(self._dropdown_toggle_locator).click()
+            self.find_element(self._hide_runnable_jobs_locator).click()
+            Wait(self.selenium, self.timeout).until(
+                lambda s: not self.is_element_visible(self._runnable_jobs_locator))
 
         def pin_all_jobs(self):
             return self.find_element(self._pin_all_jobs_locator).click()
