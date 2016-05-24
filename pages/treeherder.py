@@ -15,10 +15,12 @@ from pages.base import Base
 class TreeherderPage(Base):
 
     _active_watched_repo_locator = (By.CSS_SELECTOR, '#watched-repo-navbar button.active')
+    _clear_filter_locator = (By.ID, 'quick-filter-clear-button')
     _mozilla_central_repo_locator = (By.CSS_SELECTOR, '#th-global-navbar-top a[href*="mozilla-central"]')
     _next_ten_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(1)')
     _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
     _next_fifty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(3)')
+    _quick_filter_locator = (By.ID, 'quick-filter')
     _repos_menu_locator = (By.ID, 'repoLabel')
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
     _unchecked_repos_links_locator = (By.CSS_SELECTOR, '#repoLabel + .dropdown-menu .dropdown-checkbox:not([checked]) + .dropdown-link')
@@ -66,6 +68,15 @@ class TreeherderPage(Base):
         self.find_element(*self._next_fifty_locator).click()
         self.wait.until(lambda s: len(self.result_sets) == 60)
         return self
+
+    def filter_clear(self):
+        self.selenium.find_element(*self._clear_filter_locator).click()
+
+    def filter_search(self, term):
+        el = self.selenium.find_element(*self._quick_filter_locator)
+        el.send_keys(term)
+        el.send_keys(Keys.RETURN)
+        self.wait_for_page_to_load()
 
     def open_next_unclassified_failure(self):
         el = self.find_element(*self._result_sets_locator)
