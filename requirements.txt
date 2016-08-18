@@ -2,4 +2,4 @@ bidpom
 PyPOM
 pytest==2.9.2
 pytest-selenium
-pytest-xdist==1.14
+pytest-xdist==1.15.0
