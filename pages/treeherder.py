@@ -93,7 +93,9 @@ class TreeherderPage(Base):
         _jobs_locator = (By.CLASS_NAME, 'job-btn')
         _pin_all_jobs_locator = (By.CLASS_NAME, 'pin-all-jobs-btn')
         _runnable_jobs_locator = (By.CSS_SELECTOR, '.runnable-job-btn.filter-shown')
-
+        _set_bottom_of_range_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(8) > a') 
+        _set_top_of_range_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(7) > a')
+ 
         @property
         def datestamp(self):
             return self.find_element(*self._datestamp_locator).text
@@ -118,6 +120,14 @@ class TreeherderPage(Base):
 
         def pin_all_jobs(self):
             return self.find_element(*self._pin_all_jobs_locator).click()
+
+        def set_as_bottom_of_range(self):
+            self.find_element(*self._dropdown_toggle_locator).click()
+            self.find_element(*self._set_bottom_of_range_locator).click()
+
+        def set_as_top_of_range(self):
+            self.find_element(*self._dropdown_toggle_locator).click()
+            self.find_element(*self._set_top_of_range_locator).click()
 
         def view(self):
             return self.find_element(*self._datestamp_locator).click()
