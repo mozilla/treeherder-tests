@@ -16,6 +16,9 @@ class TreeherderPage(Base):
 
     _active_watched_repo_locator = (By.CSS_SELECTOR, '#watched-repo-navbar button.active')
     _mozilla_central_repo_locator = (By.CSS_SELECTOR, '#th-global-navbar-top a[href*="mozilla-central"]')
+    _next_ten_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(1)')
+    _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
+    _next_fifty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(3)')
     _repos_menu_locator = (By.ID, 'repoLabel')
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
     _unchecked_repos_links_locator = (By.CSS_SELECTOR, '#repoLabel + .dropdown-menu .dropdown-checkbox:not([checked]) + .dropdown-link')
@@ -48,6 +51,15 @@ class TreeherderPage(Base):
     @property
     def unclassified_failure_count(self):
         return int(self.find_element(*self._unclassified_failure_count_locator).text)
+
+    def get_next_ten_results(self):
+        self.find_element(*self._next_ten_locator).click()
+
+    def get_next_twenty_results(self):
+        self.find_element(*self._next_twenty_locator).click()
+
+    def get_next_fifty_results(self):
+        self.find_element(*self._next_fifty_locator).click()
 
     def open_next_unclassified_failure(self):
         el = self.find_element(*self._result_sets_locator)
