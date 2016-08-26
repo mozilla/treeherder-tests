@@ -8,12 +8,10 @@ from pages.treeherder import TreeherderPage
 
 
 @pytest.mark.nondestructive
-def test_expand_job_count(base_url, selenium):
+def test_expanding_group_count(base_url, selenium):
     page = TreeherderPage(selenium, base_url).open()
-    assert len(page.result_sets[0].jobs) >= 1
+    assert len(page.result_sets) > 1
+    assert not page.result_sets[0].find_expanded_group_content
 
-    job_total = len(page.result_sets[0].jobs)
     page.result_sets[0].expand_group_count()
-
-    new_job_total = len(page.result_sets[0].jobs)
-    assert new_job_total > job_total
+    assert page.result_sets[0].find_expanded_group_content
