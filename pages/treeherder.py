@@ -89,6 +89,8 @@ class TreeherderPage(Base):
         _add_new_job_locator = (By.CSS_SELECTOR, '.open ul > li a')
         _datestamp_locator = (By.CSS_SELECTOR, '.result-set-title-left > span a')
         _dropdown_toggle_locator = (By.CLASS_NAME, 'dropdown-toggle')
+        _expanded_group_content_locator = (By.CSS_SELECTOR, '.group-job-list[style="display: inline;"]')
+        _group_content_locator = (By.CSS_SELECTOR, 'span.group-count-list .btn')
         _hide_runnable_jobs_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(2) > a')
         _jobs_locator = (By.CLASS_NAME, 'job-btn')
         _pin_all_jobs_locator = (By.CLASS_NAME, 'pin-all-jobs-btn')
@@ -112,6 +114,14 @@ class TreeherderPage(Base):
             self.find_element(*self._dropdown_toggle_locator).click()
             self.find_element(*self._add_new_job_locator).click()
             self.wait.until(lambda s: self.is_element_displayed(*self._runnable_jobs_locator))
+
+        @property
+        def find_expanded_group_content(self):
+            return self.is_element_displayed(*self._expanded_group_content_locator)
+
+        def expand_group_count(self):
+            self.find_element(*self._group_content_locator).click()
+            self.wait.until(lambda s: self.is_element_displayed(*self._expanded_group_content_locator))
 
         def hide_runnable_jobs(self):
             self.find_element(*self._dropdown_toggle_locator).click()
