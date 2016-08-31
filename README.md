@@ -62,7 +62,7 @@ the tests:
 To run all of the desktop tests against the default environment:
 
 ```bash
-$ py.test --driver firefox
+$ py.test --driver Firefox
 ```
 
 To run against a different environment, pass in a value for `--base-url`, like
