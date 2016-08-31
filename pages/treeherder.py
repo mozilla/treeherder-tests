@@ -69,14 +69,14 @@ class TreeherderPage(Base):
         self.wait.until(lambda s: len(self.result_sets) == 60)
         return self
 
-    def filter_clear(self):
+    def clear_filter(self):
         self.selenium.find_element(*self._clear_filter_locator).click()
 
-    def filter_search(self, term):
+    def filter_by(self, term):
         el = self.selenium.find_element(*self._quick_filter_locator)
         el.send_keys(term)
         el.send_keys(Keys.RETURN)
-        self.wait_for_page_to_load()
+        self.wait.until(lambda s: self.result_sets)
 
     def open_next_unclassified_failure(self):
         el = self.find_element(*self._result_sets_locator)
@@ -123,9 +123,14 @@ class TreeherderPage(Base):
         _hide_runnable_jobs_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(2) > a')
         _jobs_locator = (By.CLASS_NAME, 'job-btn')
         _pin_all_jobs_locator = (By.CLASS_NAME, 'pin-all-jobs-btn')
+        _platform_locator = (By.CLASS_NAME, 'platform')
         _runnable_jobs_locator = (By.CSS_SELECTOR, '.runnable-job-btn.filter-shown')
         _set_bottom_of_range_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(8) > a')
         _set_top_of_range_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(7) > a')
+
+        @property
+        def builds(self):
+            return [self.Build(self.page, root=el) for el in self.find_elements(*self._platform_locator)]
 
         @property
         def datestamp(self):
@@ -170,6 +175,13 @@ class TreeherderPage(Base):
 
         def view(self):
             return self.find_element(*self._datestamp_locator).click()
+
+        class Build(Region):
+            _platform_name_locator = (By.CSS_SELECTOR, 'td:nth-child(1) > span:nth-child(1)')
+
+            @property
+            def platform_name(self):
+                return self.find_element(*self._platform_name_locator).text
 
         class Job(Region):
 
