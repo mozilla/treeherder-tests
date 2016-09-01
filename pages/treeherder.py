@@ -21,6 +21,7 @@ class TreeherderPage(Base):
     _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
     _next_fifty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(3)')
     _quick_filter_locator = (By.ID, 'quick-filter')
+    _notification_locator = (By.CSS_SELECTOR, 'ul#notification-box')
     _repos_menu_locator = (By.ID, 'repoLabel')
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
     _unchecked_repos_links_locator = (By.CSS_SELECTOR, '#repoLabel + .dropdown-menu .dropdown-checkbox:not([checked]) + .dropdown-link')
@@ -37,6 +38,10 @@ class TreeherderPage(Base):
     @property
     def job_details(self):
         return self.JobDetails(self)
+
+    @property
+    def notification_text(self):
+        return self.find_element(*self._notification_locator).text
 
     @property
     def pinboard(self):
