@@ -54,12 +54,18 @@ class TreeherderPage(Base):
 
     def get_next_ten_results(self):
         self.find_element(*self._next_ten_locator).click()
+        self.wait.until(lambda s: len(self.result_sets) == 20)
+        return self
 
     def get_next_twenty_results(self):
         self.find_element(*self._next_twenty_locator).click()
+        self.wait.until(lambda s: len(self.result_sets) == 30)
+        return self
 
     def get_next_fifty_results(self):
         self.find_element(*self._next_fifty_locator).click()
+        self.wait.until(lambda s: len(self.result_sets) == 60)
+        return self
 
     def open_next_unclassified_failure(self):
         el = self.find_element(*self._result_sets_locator)
