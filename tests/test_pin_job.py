@@ -49,6 +49,8 @@ def test_pin_a_bug(base_url, selenium, new_user):
     """Open treeherder, log in, select unclassified job, pin job, add a bug, save and verify"""
     page = TreeherderPage(selenium, base_url).open()
     page.header.login(new_user['email'], new_user['password'])
+    assert page.header.is_user_logged_in
+
     page.open_next_unclassified_failure()
     assert not page.job_details.is_job_bug_visible
     page.pin_using_spacebar()
