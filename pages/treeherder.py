@@ -21,6 +21,7 @@ class TreeherderPage(Base):
     _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
     _next_fifty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(3)')
     _quick_filter_locator = (By.ID, 'quick-filter')
+    _notification_locator = (By.CSS_SELECTOR, 'ul#notification-box')
     _repos_menu_locator = (By.ID, 'repoLabel')
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
     _unchecked_repos_links_locator = (By.CSS_SELECTOR, '#repoLabel + .dropdown-menu .dropdown-checkbox:not([checked]) + .dropdown-link')
@@ -37,6 +38,10 @@ class TreeherderPage(Base):
     @property
     def job_details(self):
         return self.JobDetails(self)
+
+    @property
+    def notification_text(self):
+        return self.find_element(*self._notification_locator).text
 
     @property
     def pinboard(self):
@@ -195,10 +200,15 @@ class TreeherderPage(Base):
 
     class JobDetails(Region):
 
+        _job_bug_locator = (By.CSS_SELECTOR, '#job-details-pane > ul > li > a > em')
         _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span:nth-child(2)')
         _logviewer_button_locator = (By.ID, 'logviewer-btn')
         _pin_job_locator = (By.ID, 'pin-job-btn')
         _job_details_panel_locator = (By.ID, 'job-details-panel')
+
+        @property
+        def is_job_bug_visible(self):
+            return self.is_element_displayed(*self._job_bug_locator)
 
         @property
         def job_result_status(self):
@@ -219,10 +229,14 @@ class TreeherderPage(Base):
     class Pinboard(Region):
 
         _root_locator = (By.ID, 'pinboard-panel')
+        _add_bug_locator = (By.CSS_SELECTOR, '#pinboard-related-bugs .pinboard-preload-txt')
+        _add_bug_id_locator = (By.CSS_SELECTOR, '#related-bug-input')
         _clear_all_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .dropdown-menu li:nth-child(4)')
         _open_save_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .save-btn-dropdown')
         _jobs_locator = (By.CLASS_NAME, 'pinned-job')
         _pinboard_remove_job_locator = (By.CSS_SELECTOR, '#pinned-job-list .pinned-job-close-btn')
+        _save_bugs_only_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .dropdown-menu li:nth-child(2)')
+        _save_pinboard_button_locator = (By.CSS_SELECTOR, '.save-btn')
 
         @property
         def selected_job(self):
@@ -236,11 +250,25 @@ class TreeherderPage(Base):
         def is_pinboard_open(self):
             return self.root.is_displayed()
 
+        def add_bug_to_pinned_job(self, bug_id):
+            self.find_element(*self._add_bug_locator).click()
+            el = self.find_element(*self._add_bug_id_locator)
+            el.click()
+            el.send_keys(bug_id)
+            el.send_keys(Keys.RETURN)
+
         def clear_pinboard(self):
             el = self.find_element(*self._open_save_menu_locator)
             el.click()
             self.wait.until(lambda _: el.get_attribute('aria-expanded') == 'true')
             self.find_element(*self._clear_all_menu_locator).click()
+
+        def save_bug_to_pinboard(self):
+            el = self.find_element(*self._open_save_menu_locator)
+            el.click()
+            self.wait.until(lambda _: el.get_attribute('aria-expanded') == 'true')
+            self.find_element(*self._save_bugs_only_menu_locator).click()
+            self.find_element(*self._save_pinboard_button_locator).click()
 
         class Job(Region):
 
