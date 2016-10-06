@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import itertools
 import random
 
 from pypom import Page, Region
@@ -16,6 +17,13 @@ class TreeherderPage(Base):
 
     _active_watched_repo_locator = (By.CSS_SELECTOR, '#watched-repo-navbar button.active')
     _clear_filter_locator = (By.ID, 'quick-filter-clear-button')
+    _close_the_job_panel_locator = (By.CSS_SELECTOR, '.info-panel-navbar-controls > li:nth-child(2)')
+    _filter_panel_locator = (By.CSS_SELECTOR, 'span.navbar-right > span:nth-child(4)')
+    _filter_panel_all_failures_locator = (By.CSS_SELECTOR, '.pull-right input')
+    _filter_panel_testfailed_failures_locator = (By.ID, 'testfailed')
+    _filter_panel_busted_failures_locator = (By.ID, 'busted')
+    _filter_panel_exception_failures_locator = (By.ID, 'exception')
+    _filter_panel_reset_locator = (By.CSS_SELECTOR, '.pull-right span:nth-child(3)')
     _mozilla_central_repo_locator = (By.CSS_SELECTOR, '#th-global-navbar-top a[href*="mozilla-central"]')
     _next_ten_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(1)')
     _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
@@ -26,6 +34,7 @@ class TreeherderPage(Base):
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
     _unchecked_repos_links_locator = (By.CSS_SELECTOR, '#repoLabel + .dropdown-menu .dropdown-checkbox:not([checked]) + .dropdown-link')
     _unclassified_failure_count_locator = (By.ID, 'unclassified-failure-count')
+    _unclassified_failure_filter_locator = (By.CSS_SELECTOR, '.btn-unclassified-failures')
 
     def wait_for_page_to_load(self):
         self.wait.until(lambda s: self.unclassified_failure_count > 0)
@@ -34,6 +43,10 @@ class TreeherderPage(Base):
     @property
     def active_watched_repo(self):
         return self.find_element(*self._active_watched_repo_locator).text
+
+    @property
+    def all_jobs(self):
+        return list(itertools.chain.from_iterable([r.jobs for r in self.result_sets]))
 
     @property
     def job_details(self):
@@ -83,6 +96,9 @@ class TreeherderPage(Base):
         el.send_keys(Keys.RETURN)
         self.wait.until(lambda s: self.result_sets)
 
+    def filter_unclassified_jobs(self):
+        self.find_element(*self._unclassified_failure_filter_locator).click()
+
     def open_next_unclassified_failure(self):
         el = self.find_element(*self._result_sets_locator)
         self.wait.until(EC.visibility_of(el))
@@ -118,6 +134,53 @@ class TreeherderPage(Base):
         self.wait.until(lambda s: self._active_watched_repo_locator == repo_name)
         return repo_name
 
+    def click_on_filters_panel(self):
+        self.find_element(*self._filter_panel_locator).click()
+
+    def close_the_job_panel(self):
+        self.find_element(*self._close_the_job_panel_locator).click()
+
+    def deselect_all_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_all_failures_locator).click()
+
+    def reset_filters(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_reset_locator).click()
+
+    def select_testfailed_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_testfailed_failures_locator).click()
+
+    def deselect_testfailed_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_testfailed_failures_locator).click()
+
+    def select_busted_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_busted_failures_locator).click()
+
+    def deselect_busted_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_busted_failures_locator).click()
+
+    def select_exception_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_exception_failures_locator).click()
+
+    def deselect_exception_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_exception_failures_locator).click()
+
+    def checkbox_testfailed_is_selected(self):
+        return self.find_element(*self._filter_panel_testfailed_failures_locator).is_selected()
+
+    def checkbox_busted_is_selected(self):
+        return self.find_element(*self._filter_panel_busted_failures_locator).is_selected()
+
+    def checkbox_exception_is_selected(self):
+        return self.find_element(*self._filter_panel_exception_failures_locator).is_selected()
+
     class ResultSet(Region):
 
         _add_new_job_locator = (By.CSS_SELECTOR, '.open ul > li a')
@@ -126,7 +189,7 @@ class TreeherderPage(Base):
         _expanded_group_content_locator = (By.CSS_SELECTOR, '.group-job-list[style="display: inline;"]')
         _group_content_locator = (By.CSS_SELECTOR, 'span.group-count-list .btn')
         _hide_runnable_jobs_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(2) > a')
-        _jobs_locator = (By.CLASS_NAME, 'job-btn')
+        _jobs_locator = (By.CSS_SELECTOR, '.job-btn.filter-shown')
         _pin_all_jobs_locator = (By.CLASS_NAME, 'pin-all-jobs-btn')
         _platform_locator = (By.CLASS_NAME, 'platform')
         _runnable_jobs_locator = (By.CSS_SELECTOR, '.runnable-job-btn.filter-shown')
