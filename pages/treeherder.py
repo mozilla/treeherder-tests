@@ -173,6 +173,10 @@ class TreeherderPage(Base):
         """Filters Panel must be opened"""
         self.find_element(*self._filter_panel_testfailed_failures_locator).click()
 
+    def select_random_job(self):
+        random_job = random.choice(self.all_jobs)
+        random_job.click()
+
     def select_random_repo(self):
         self.open_repos_menu()
         repo = random.choice(self.unchecked_repos)
@@ -266,6 +270,7 @@ class TreeherderPage(Base):
 
         _job_bug_locator = (By.CSS_SELECTOR, '#job-details-pane > ul > li > a > em')
         _job_details_panel_locator = (By.ID, 'job-details-panel')
+        _job_keyword_locator = (By.CSS_SELECTOR, '#job-details-pane > ul > li > a:nth-last-child(1)')
         _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span:nth-child(2)')
         _logviewer_button_locator = (By.ID, 'logviewer-btn')
         _pin_job_locator = (By.ID, 'pin-job-btn')
@@ -275,8 +280,15 @@ class TreeherderPage(Base):
             return self.is_element_displayed(*self._job_bug_locator)
 
         @property
+        def job_keyword_name(self):
+            return self.find_element(*self._job_keyword_locator).text
+
+        @property
         def job_result_status(self):
             return self.find_element(*self._job_result_status_locator).text
+
+        def filter_by_job_keyword(self):
+            self.find_element(*self._job_keyword_locator).click()
 
         def open_logviewer(self):
             self.find_element(*self._job_details_panel_locator).send_keys('l')
