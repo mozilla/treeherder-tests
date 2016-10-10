@@ -25,9 +25,6 @@ in irc.mozilla.org [#mozwebqa][irc] to ask questions about our tests. We also
 have a [mailing list][list] available that you are welcome to join and post to.
 
 ## How to run the tests locally
-We maintain a [detailed guide][running-tests] to running our automated tests.
-However, if you want to get started quickly, you can try following the steps
-below:
 
 ### Clone the repository
 If you have cloned this project already then you can skip this, otherwise you'll
@@ -39,42 +36,19 @@ them in the future, it would be a good idea to create a fork of this repository
 first, and then clone that. GitHub also has great documentation for
 [forking a repository][git-fork].
 
-### Create or activate a Python virtual environment
-You should install this project's dependencies (which is described in the next
-step) into a virtual environment in order to avoid impacting the rest of your
-system, and to make problem solving easier. If you already have a virtual
-environment for these tests, then you should activate it, otherwise you should
-create a new one. For more information on working with virtual environments see
-our [summary][virtualenv].
-
-### Install dependencies
-Install the Python packages that are needed to run our tests using pip. In a
-terminal, from the the project root, issue the following command:
-
-```bash
-$ pip install -Ur requirements.txt
-```
-
 ### Run the tests
-Tests are run using the command line. Below are a couple of examples of running
-the tests:
-
-To run all of the desktop tests against the default environment:
-
-```bash
-$ py.test --driver Firefox
-```
+Install the Python package that are need to run our tests.
+[Install Tox][tox]. Test are run using the command line. Type `tox`.
 
 To run against a different environment, pass in a value for `--base-url`, like
 so:
 
 ```bash
-$ py.test --base-url https://treeherder.mozilla.org --driver Firefox
+$ tox -e tests -- --base-url https://treeherder.mozilla.org
 ```
 
 The pytest plugin that we use for running tests has a number of advanced
-command line options available. To see the options available, run
-`py.test --help`. The full documentation for the plugin can be found
+command line options available. The full documentation for the plugin can be found
 [here][pytest-selenium].
 
 [contributors]: https://github.com/mozilla/treeherder-tests/contributors
@@ -83,5 +57,4 @@ command line options available. To see the options available, run
 [irc]: http://widget01.mibbit.com/?settings=1b10107157e79b08f2bf99a11f521973&server=irc.mozilla.org&channel=%23mozwebqa
 [list]: https://mail.mozilla.org/listinfo/mozwebqa
 [pytest-selenium]: http://pytest-selenium.readthedocs.org/
-[running-tests]: https://developer.mozilla.org/en-US/docs/Mozilla/QA/Running_Web_QA_automated_tests
-[virtualenv]: https://wiki.mozilla.org/QA/Execution/Web_Testing/Automation/Virtual_Environments
+[tox]: https://tox.readthedocs.io/en/latest/install.html
