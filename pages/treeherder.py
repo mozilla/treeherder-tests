@@ -45,6 +45,10 @@ class TreeherderPage(Base):
         return self.find_element(*self._active_watched_repo_locator).text
 
     @property
+    def all_emails(self):
+        return list(itertools.chain.from_iterable([r.emails for r in self.result_sets]))
+
+    @property
     def all_jobs(self):
         return list(itertools.chain.from_iterable([r.jobs for r in self.result_sets]))
 
@@ -73,6 +77,11 @@ class TreeherderPage(Base):
         return self.Pinboard(self)
 
     @property
+    def random_email_name(self):
+        random_email_name = random.choice(self.all_emails)
+        return random_email_name.get_name
+
+    @property
     def result_sets(self):
         return [self.ResultSet(self, el) for el in self.find_elements(*self._result_sets_locator)]
 
@@ -89,6 +98,9 @@ class TreeherderPage(Base):
 
     def click_on_filters_panel(self):
         self.find_element(*self._filter_panel_locator).click()
+
+    def click_on_active_watched_repo(self):
+        self.find_element(*self._active_watched_repo_locator).click()
 
     def close_the_job_panel(self):
         self.find_element(*self._close_the_job_panel_locator).click()
@@ -173,6 +185,10 @@ class TreeherderPage(Base):
         """Filters Panel must be opened"""
         self.find_element(*self._filter_panel_testfailed_failures_locator).click()
 
+    def select_random_email(self):
+        random_email = random.choice(self.all_emails)
+        random_email.click()
+
     def select_random_job(self):
         random_job = random.choice(self.all_jobs)
         random_job.click()
@@ -190,6 +206,7 @@ class TreeherderPage(Base):
         _add_new_job_locator = (By.CSS_SELECTOR, '.open ul > li a')
         _datestamp_locator = (By.CSS_SELECTOR, '.result-set-title-left > span a')
         _dropdown_toggle_locator = (By.CLASS_NAME, 'dropdown-toggle')
+        _email_locator = (By.CSS_SELECTOR, '.result-set-title-left > th-author > span > a')
         _expanded_group_content_locator = (By.CSS_SELECTOR, '.group-job-list[style="display: inline;"]')
         _group_content_locator = (By.CSS_SELECTOR, 'span.group-count-list .btn')
         _hide_runnable_jobs_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(2) > a')
@@ -207,6 +224,14 @@ class TreeherderPage(Base):
         @property
         def datestamp(self):
             return self.find_element(*self._datestamp_locator).text
+
+        @property
+        def emails(self):
+            return [self.Email(self.page, root=el) for el in self.find_elements(*self._email_locator)]
+
+        @property
+        def email_name(self):
+            return self.find_element(*self._email_locator).text
 
         @property
         def find_expanded_group_content(self):
@@ -255,6 +280,15 @@ class TreeherderPage(Base):
             @property
             def platform_name(self):
                 return self.find_element(*self._platform_name_locator).text
+
+        class Email(Region):
+
+            @property
+            def get_name(self):
+                return self.root.text
+
+            def click(self):
+                self.root.click()
 
         class Job(Region):
 
