@@ -17,4 +17,5 @@ def test_filter_by_job_keyword(base_url, selenium):
     page.job_details.filter_by_job_keyword()
     keyword = page.job_details.job_keyword_name
 
-    assert page.result_sets[0].builds[0].platform_name in keyword
+    page.select_random_job()
+    assert keyword in page.job_details.job_keyword_name
