@@ -28,7 +28,6 @@ def test_remove_email_address_filter(base_url, selenium):
     page.select_random_email()
 
     page.click_on_active_watched_repo()
-    first_email = page.random_email_name
-    second_email = page.random_email_name
+    all_emails = [email.get_name for email in page.all_emails]
 
-    assert first_email != second_email
+    assert len(set(all_emails)) > 1
