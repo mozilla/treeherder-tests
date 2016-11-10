@@ -28,7 +28,6 @@ class TreeherderPage(Base):
     _next_ten_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(1)')
     _next_twenty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(2)')
     _next_fifty_locator = (By.CSS_SELECTOR, 'div.btn:nth-child(3)')
-    _notification_locator = (By.CSS_SELECTOR, 'ul#notification-box')
     _quick_filter_locator = (By.ID, 'quick-filter')
     _repos_menu_locator = (By.ID, 'repoLabel')
     _result_sets_locator = (By.CSS_SELECTOR, '.result-set:not(.row)')
@@ -67,10 +66,6 @@ class TreeherderPage(Base):
     @property
     def job_details(self):
         return self.JobDetails(self)
-
-    @property
-    def notification_text(self):
-        return self.find_element(*self._notification_locator).text
 
     @property
     def pinboard(self):
@@ -203,17 +198,14 @@ class TreeherderPage(Base):
 
     class ResultSet(Region):
 
-        _add_new_job_locator = (By.CSS_SELECTOR, '.open ul > li a')
         _datestamp_locator = (By.CSS_SELECTOR, '.result-set-title-left > span a')
         _dropdown_toggle_locator = (By.CLASS_NAME, 'dropdown-toggle')
         _email_locator = (By.CSS_SELECTOR, '.result-set-title-left > th-author > span > a')
         _expanded_group_content_locator = (By.CSS_SELECTOR, '.group-job-list[style="display: inline;"]')
         _group_content_locator = (By.CSS_SELECTOR, 'span.group-count-list .btn')
-        _hide_runnable_jobs_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(2) > a')
         _jobs_locator = (By.CSS_SELECTOR, '.job-btn.filter-shown')
         _pin_all_jobs_locator = (By.CLASS_NAME, 'pin-all-jobs-btn')
         _platform_locator = (By.CLASS_NAME, 'platform')
-        _runnable_jobs_locator = (By.CSS_SELECTOR, '.runnable-job-btn.filter-shown')
         _set_bottom_of_range_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(8) > a')
         _set_top_of_range_locator = (By.CSS_SELECTOR, '.open ul > li:nth-child(7) > a')
 
@@ -241,23 +233,9 @@ class TreeherderPage(Base):
         def jobs(self):
             return [self.Job(self.page, root=el) for el in self.find_elements(*self._jobs_locator)]
 
-        @property
-        def runnable_jobs(self):
-            return [self.Job(self.page, root=el) for el in self.find_elements(*self._runnable_jobs_locator)]
-
-        def add_new_jobs(self):
-            self.find_element(*self._dropdown_toggle_locator).click()
-            self.find_element(*self._add_new_job_locator).click()
-            self.wait.until(lambda s: self.is_element_displayed(*self._runnable_jobs_locator))
-
         def expand_group_count(self):
             self.find_element(*self._group_content_locator).click()
             self.wait.until(lambda s: self.is_element_displayed(*self._expanded_group_content_locator))
-
-        def hide_runnable_jobs(self):
-            self.find_element(*self._dropdown_toggle_locator).click()
-            self.find_element(*self._hide_runnable_jobs_locator).click()
-            self.wait.until(lambda s: not self.is_element_displayed(*self._runnable_jobs_locator))
 
         def pin_all_jobs(self):
             return self.find_element(*self._pin_all_jobs_locator).click()
@@ -302,16 +280,11 @@ class TreeherderPage(Base):
 
     class JobDetails(Region):
 
-        _job_bug_locator = (By.CSS_SELECTOR, '#job-details-pane > ul > li > a > em')
         _job_details_panel_locator = (By.ID, 'job-details-panel')
         _job_keyword_locator = (By.CSS_SELECTOR, '#job-details-pane > ul > li > a:nth-last-child(1)')
         _job_result_status_locator = (By.CSS_SELECTOR, '#result-status-pane > div:nth-child(1) > span:nth-child(2)')
         _logviewer_button_locator = (By.ID, 'logviewer-btn')
         _pin_job_locator = (By.ID, 'pin-job-btn')
-
-        @property
-        def is_job_bug_visible(self):
-            return self.is_element_displayed(*self._job_bug_locator)
 
         @property
         def job_keyword_name(self):
@@ -339,14 +312,10 @@ class TreeherderPage(Base):
     class Pinboard(Region):
 
         _root_locator = (By.ID, 'pinboard-panel')
-        _add_bug_id_locator = (By.CSS_SELECTOR, '#related-bug-input')
-        _add_bug_locator = (By.CSS_SELECTOR, '#pinboard-related-bugs .pinboard-preload-txt')
         _clear_all_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .dropdown-menu li:nth-child(4)')
         _jobs_locator = (By.CLASS_NAME, 'pinned-job')
         _open_save_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .save-btn-dropdown')
         _pinboard_remove_job_locator = (By.CSS_SELECTOR, '#pinned-job-list .pinned-job-close-btn')
-        _save_bugs_only_menu_locator = (By.CSS_SELECTOR, '#pinboard-controls .dropdown-menu li:nth-child(2)')
-        _save_pinboard_button_locator = (By.CSS_SELECTOR, '.save-btn')
 
         @property
         def is_pinboard_open(self):
@@ -360,25 +329,11 @@ class TreeherderPage(Base):
         def selected_job(self):
             return next(j for j in self.jobs if j.is_selected)
 
-        def add_bug_to_pinned_job(self, bug_id):
-            self.find_element(*self._add_bug_locator).click()
-            el = self.find_element(*self._add_bug_id_locator)
-            el.click()
-            el.send_keys(bug_id)
-            el.send_keys(Keys.RETURN)
-
         def clear_pinboard(self):
             el = self.find_element(*self._open_save_menu_locator)
             el.click()
             self.wait.until(lambda _: el.get_attribute('aria-expanded') == 'true')
             self.find_element(*self._clear_all_menu_locator).click()
-
-        def save_bug_to_pinboard(self):
-            el = self.find_element(*self._open_save_menu_locator)
-            el.click()
-            self.wait.until(lambda _: el.get_attribute('aria-expanded') == 'true')
-            self.find_element(*self._save_bugs_only_menu_locator).click()
-            self.find_element(*self._save_pinboard_button_locator).click()
 
         class Job(Region):
 
