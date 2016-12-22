@@ -38,7 +38,7 @@ first, and then clone that. GitHub also has great documentation for
 [forking a repository][git-fork].
 
 ### Run the tests
-* Install the Python package that are need to run our tests.
+* Install the Python packages that are needed to run our tests.
 * [Install Tox][tox].
 
 Tests are run using the command line. Type `tox`.
