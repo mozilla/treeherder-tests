@@ -38,8 +38,10 @@ first, and then clone that. GitHub also has great documentation for
 [forking a repository][git-fork].
 
 ### Run the tests
-Install the Python package that are need to run our tests.
-[Install Tox][tox]. Test are run using the command line. Type `tox`.
+* Install the Python package that are need to run our tests.
+* [Install Tox][tox].
+
+Tests are run using the command line. Type `tox`.
 
 To run against a different environment, pass in a value for `--base-url`, like
 so:
