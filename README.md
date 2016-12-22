@@ -22,7 +22,7 @@ repository.
 ## Questions are always welcome
 While we take pains to keep our documentation updated, the best source of
 information is those of us who work on the project. Don't be afraid to join us
-in irc.mozilla.org [#mozwebqa][irc] to ask questions about our tests. We also
+in irc.mozilla.org [#fx-test][irc] to ask questions about our tests. We also
 have a [mailing list][list] available that you are welcome to join and post to.
 
 ## How to run the tests locally
@@ -38,8 +38,10 @@ first, and then clone that. GitHub also has great documentation for
 [forking a repository][git-fork].
 
 ### Run the tests
-Install the Python package that are need to run our tests.
-[Install Tox][tox]. Test are run using the command line. Type `tox`.
+* Install the Python packages that are needed to run our tests.
+* [Install Tox][tox].
+
+Tests are run using the command line. Type `tox`.
 
 To run against a different environment, pass in a value for `--base-url`, like
 so:
@@ -55,7 +57,8 @@ command line options available. The full documentation for the plugin can be fou
 [contributors]: https://github.com/mozilla/treeherder-tests/contributors
 [git-clone]: https://help.github.com/articles/cloning-a-repository/
 [git-fork]: https://help.github.com/articles/fork-a-repo/
-[irc]: http://widget01.mibbit.com/?settings=1b10107157e79b08f2bf99a11f521973&server=irc.mozilla.org&channel=%23mozwebqa
-[list]: https://mail.mozilla.org/listinfo/mozwebqa
+[irc]: http://widget01.mibbit.com/?settings=1b10107157e79b08f2bf99a11f521973&server=irc.mozilla.org&channel=%23fx-test
+[list]: https://groups.google.com/a/mozilla.com/forum/#!aboutgroup/firefox-test-engineering
 [pytest-selenium]: http://pytest-selenium.readthedocs.org/
+[running-tests]: https://developer.mozilla.org/en-US/docs/Mozilla/QA/Running_Web_QA_automated_tests
 [tox]: https://tox.readthedocs.io/en/latest/install.html
