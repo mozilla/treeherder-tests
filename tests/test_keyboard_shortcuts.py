@@ -13,19 +13,21 @@ def test_next_job_shortcut(base_url, selenium):
     using Right Arrow shortcut, verify job keywords match."""
 
     page = TreeherderPage(selenium, base_url).open()
-    all_jobs = page.all_jobs
+    all_jobs = page.all_jobs[:-1]
 
     # Check number of jobs
-    num_of_jobs = len(all_jobs) - 1
-    random_index = random.randint(0, num_of_jobs)
+    random_index = random.randint(0, len(all_jobs))
+    jobs = all_jobs[random_index:(random_index + 2)]
 
     # Select random job and job next to it
-    all_jobs[random_index].click()
-    assumed_job_keyword = page.job_details.job_keyword_name
+    jobs[0].click()
+    assert jobs[0].selected
+    assert not jobs[1].selected
 
     page.select_next_job()
 
-    assert page.job_details.job_keyword_name == assumed_job_keyword
+    assert jobs[1].selected
+    assert not jobs[0].selected
 
 
 def test_previous_job_shortcut(base_url, selenium):
@@ -34,15 +36,18 @@ def test_previous_job_shortcut(base_url, selenium):
     using Left Arrow shortcut, verify job keywords match."""
 
     page = TreeherderPage(selenium, base_url).open()
-    all_jobs = page.all_jobs
+    all_jobs = page.all_jobs[:-1]
 
     # Check number of jobs
-    number_of_jobs = len(all_jobs)
-    random_index = random.randint(1, number_of_jobs - 1)
+    random_index = random.randint(0, len(all_jobs))
+    jobs = all_jobs[random_index:(random_index + 2)]
 
-    # Select random job and job to the left
-    all_jobs[random_index].click()
-    assumed_job_keyword = page.job_details.job_keyword_name
+    # Select random job and previous job
+    jobs[1].click()
+    assert jobs[1].selected
+    assert not jobs[0].selected
+
     page.select_previous_job()
 
-    assert page.job_details.job_keyword_name == assumed_job_keyword
+    assert jobs[0].selected
+    assert not jobs[1].selected

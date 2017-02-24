@@ -333,6 +333,10 @@ class TreeherderPage(Base):
         class Job(Region):
 
             @property
+            def selected(self):
+                return 'selected-job' in self.root.get_attribute('class')
+
+            @property
             def symbol(self):
                 return self.root.text
 
