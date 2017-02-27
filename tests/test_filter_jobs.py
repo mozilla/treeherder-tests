@@ -13,10 +13,10 @@ def test_filter_jobs(base_url, selenium):
     page = TreeherderPage(selenium, base_url).open()
     platform = u'Linux'
 
-    page.filter_by(platform)
+    page.filter_by(platform, method='pointer')
     assert platform in page.result_sets[0].builds[0].platform_name
 
     page.clear_filter()
     platform2 = u'Windows'
-    page.filter_by(platform2)
+    page.filter_by(platform2, method='pointer')
     assert platform not in page.result_sets[0].builds[0].platform_name
