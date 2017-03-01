@@ -217,12 +217,6 @@ class TreeherderPage(Base):
         """Filters Panel must be opened"""
         self.find_element(*self._filter_panel_reset_locator).click()
 
-    def select_mozilla_central_repo(self):
-        # Fix me: https://github.com/mozilla/treeherder-tests/issues/43
-        self.open_repos_menu()
-        self.find_element(*self._mozilla_central_repo_locator).click()
-        self.wait_for_page_to_load()
-
     def select_busted_failures(self):
         """Filters Panel must be opened"""
         self.find_element(*self._filter_panel_busted_failures_locator).click()
@@ -231,9 +225,17 @@ class TreeherderPage(Base):
         """Filters Panel must be opened"""
         self.find_element(*self._filter_panel_exception_failures_locator).click()
 
-    def select_testfailed_failures(self):
-        """Filters Panel must be opened"""
-        self.find_element(*self._filter_panel_testfailed_failures_locator).click()
+    def select_mozilla_central_repo(self):
+        # Fix me: https://github.com/mozilla/treeherder-tests/issues/43
+        self.open_repos_menu()
+        self.find_element(*self._mozilla_central_repo_locator).click()
+        self.wait_for_page_to_load()
+
+    def select_next_job(self):
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(Keys.ARROW_RIGHT)
+
+    def select_previous_job(self):
+        self.find_element(By.CSS_SELECTOR, 'body').send_keys(Keys.ARROW_LEFT)
 
     def select_random_email(self):
         random_email = random.choice(self.all_emails)
@@ -251,6 +253,10 @@ class TreeherderPage(Base):
         repo.click()
         self.wait.until(lambda s: self._active_watched_repo_locator == repo_name)
         return repo_name
+
+    def select_testfailed_failures(self):
+        """Filters Panel must be opened"""
+        self.find_element(*self._filter_panel_testfailed_failures_locator).click()
 
     class ResultSet(Region):
 
@@ -325,6 +331,10 @@ class TreeherderPage(Base):
                 self.root.click()
 
         class Job(Region):
+
+            @property
+            def selected(self):
+                return 'selected-job' in self.root.get_attribute('class')
 
             @property
             def symbol(self):
